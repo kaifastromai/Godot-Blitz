@@ -1,0 +1,97 @@
+[gd_scene load_steps=9 format=3 uid="uid://on0y2chew1ad"]
+
+[ext_resource type="Script" path="res://Scripts/StartGameView.cs" id="1_k8wmg"]
+[ext_resource type="FontFile" uid="uid://m4bum73pbrhg" path="res://Dupincel VF Italic.ttf" id="1_v2rvk"]
+[ext_resource type="FontFile" uid="uid://ceqmoh6jvxojg" path="res://Dupincel VF Roman.ttf" id="2_xumdo"]
+
+[sub_resource type="Theme" id="Theme_ic5um"]
+
+[sub_resource type="Theme" id="Theme_xeqkm"]
+default_font = ExtResource("2_xumdo")
+default_font_size = 80
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_k1i2w"]
+
+[sub_resource type="Theme" id="Theme_8kp1g"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vqdjt"]
+bg_color = Color(0.0823529, 0.254902, 0.184314, 1)
+
+[node name="StartGameview" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = -1.0
+offset_right = 2.0
+offset_bottom = -1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_k8wmg")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+offset_left = 604.0
+offset_right = 604.0
+offset_bottom = 1080.0
+
+[node name="NewGameLabel" type="Label" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme = SubResource("Theme_ic5um")
+theme_override_fonts/font = ExtResource("1_v2rvk")
+theme_override_font_sizes/font_size = 130
+text = "new game
+"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="PlayersListPanel" type="PanelContainer" parent="VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(400, 600.005)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme = SubResource("Theme_xeqkm")
+theme_override_styles/panel = SubResource("StyleBoxEmpty_k1i2w")
+
+[node name="Vbox" type="VBoxContainer" parent="VBoxContainer/HBoxContainer/PlayersListPanel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="PlayersLabel" type="Label" parent="VBoxContainer/HBoxContainer/PlayersListPanel/Vbox"]
+layout_mode = 2
+theme = SubResource("Theme_8kp1g")
+theme_override_font_sizes/font_size = 45
+text = "players
+"
+
+[node name="PlayerListContainer" type="PanelContainer" parent="VBoxContainer/HBoxContainer/PlayersListPanel/Vbox"]
+custom_minimum_size = Vector2(600, 600)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.87
+
+[node name="PlayersItemList" type="ItemList" parent="VBoxContainer/HBoxContainer/PlayersListPanel/Vbox/PlayerListContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 20
+auto_height = true
+
+[node name="BT_StartGame" type="Button" parent="VBoxContainer/HBoxContainer/PlayersListPanel/Vbox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+theme_override_styles/normal = SubResource("StyleBoxFlat_vqdjt")
+text = "start game
+"
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_right = 20

@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://dwnm8b8i1qkf"]
+
+[ext_resource type="Script" path="res://Scripts/Deck.cs" id="1_lh5lr"]
+
+[node name="Area2D" type="Area2D"]
+script = ExtResource("1_lh5lr")
+Color = 3
+CardCount = 7

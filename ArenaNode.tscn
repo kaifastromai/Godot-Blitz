@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://dlwdfpcxt5vs3"]
+
+[ext_resource type="Script" path="res://Arena.cs" id="1_k3f2x"]
+
+[node name="Arena" type="Node2D"]
+script = ExtResource("1_k3f2x")
+CardXRenderSize = 150.0
+ProgressAmount = 10
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ArenaSize" type="Control" parent="CanvasLayer"]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2

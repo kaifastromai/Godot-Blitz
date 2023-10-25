@@ -1,0 +1,18 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://dapq10y8qpnth"]
+
+[sub_resource type="Shader" id="Shader_a6qpn"]
+code = "shader_type canvas_item;
+
+
+uniform float sat:hint_range(0.0, 1.0, 0.1);
+
+
+void fragment() {
+	vec4 tex=textureLod(TEXTURE,UV,0.0);
+	COLOR=vec4(tex.rgb*sat,tex.a);
+}
+"
+
+[resource]
+shader = SubResource("Shader_a6qpn")
+shader_parameter/sat = 1.0

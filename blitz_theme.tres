@@ -1,0 +1,8 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://c0e46g7xemo7k"]
+
+[ext_resource type="FontFile" uid="uid://ceqmoh6jvxojg" path="res://Dupincel VF Roman.ttf" id="1_36ber"]
+
+[resource]
+default_font = ExtResource("1_36ber")
+default_font_size = 15
+ItemList/font_sizes/font_size = 15

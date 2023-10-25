@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://cpp5y1py30uvo"]
+
+[ext_resource type="Texture2D" uid="uid://b5hlp18anf2wj" path="res://assets/card_images/blitz_0000.png" id="1_1ekq1"]
+[ext_resource type="Script" path="res://Card.cs" id="2_aa8ev"]
+
+[node name="Sprite2D" type="Sprite2D"]
+texture = ExtResource("1_1ekq1")
+centered = false
+script = ExtResource("2_aa8ev")

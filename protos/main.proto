@@ -1,0 +1,252 @@
+syntax="proto3";
+package proto;
+import "google/protobuf/empty.proto";
+
+enum Color{
+  RED=0;
+  BLUE=1;
+  GREEN=2;
+  YELLOW=3;
+
+}
+enum Gender{
+  BOY=0;
+  GIRL=1;
+}
+message Card{
+  uint32 playerId=1;
+  uint32 number=2;
+  Color color=3;
+  Gender gender=4;
+
+}
+message Player{
+  //A unique name for the player. Used to track stats outside of a particular session
+  string username=1;
+  //the session the player is currently in
+  string session_id=6;
+  //The id of player in the game. This is the index of the player in the players array
+  uint32 playerGameId=7;
+  //The image id of the face image that the player wants to use
+  uint32 face_image_id=4;
+  //A session admin can start and pause sessions, and also change the draw rate
+  bool is_session_admin=5;
+}
+message RegisterPlayerRq{
+  Player player=1;
+}
+
+enum EAcknowledgementType{
+  Accepted=0;
+  Rejected=1;
+}
+
+message Session{
+  string id=1;
+  repeated string players=2;
+}
+message SessionRes{
+  repeated Session sessions=1;
+}
+message GetSessionRq{
+  string session_id=1;
+}
+//This represents the global deck of the game. This is generated once by the server and sent to the clients once the game starts. The clients keep a local copy of this deck. 
+//All proceeding references to the cards are then returns in indices to this deck
+message GlobalDeck{
+  repeated Card cards=1;
+}
+service SessionService{
+  rpc GetActiveSessions(google.protobuf.Empty) returns (SessionRes);
+  //Join an active session
+  rpc JoinSession(JoinSessionRq) returns (Player);
+  //Start a new session that other players can join. The player who starts the session is the session admin. It then returns a Player message
+  //with the player_id field set to the player's unique identifier
+  rpc StartSession(StartSessionRq) returns (Player);
+  //End the given session. Must be called by admin
+  rpc EndSession(Player) returns (google.protobuf.Empty);
+  rpc GetSession(GetSessionRq) returns (Session);
+}
+
+message GamePrefs{
+  uint32 drawRate=1;
+  uint32 postPileSize=2;
+  uint32 scoreToWin=3;
+  uint32 blitz_deduction=4;
+}
+message StartGameEvent{
+  Player player=1;
+  GamePrefs prefs=2;
+}
+
+//Manages the possible face images that the players can choose from
+service ImageService{
+  rpc GetFaceImages(google.protobuf.Empty) returns (FaceImage);
+}
+
+message FaceImage{
+  uint32 id=1;
+  bytes image=2;
+  string content_type=3;
+}
+message StartSessionRq{
+  string username=1;
+  uint32 face_image_id=2;
+}
+// sent by the client to the server to open the event stream.
+message ClientInitOpenStream{
+  Player player=1;
+}
+message ChangeDrawRateEvent{
+  uint32 new_rate=1;
+}
+message ClientEvent{
+  //The id of this event. When the server makes a response to this event, it will include this id. This allows the client to match the response to the request
+  //This must be unique for each event for each player
+  uint32 eventId=3;
+  //The id of the player who made this event
+  uint32 playerId=4;
+  oneof event{
+    Play play=1;
+    ClientGameStateAction staticEvent=2;
+    // message to send a message without any data. Used when first connecting to the server
+    ClientInitOpenStream openStream=5;
+    //Start the game. Closes this session from accepting new players. Must be called by the session admin
+    StartGameEvent startGame=6;
+    ChangeDrawRateEvent changeDrawRate=7;
+    Acknowledge acknowledge=8;
+
+  }
+
+}
+enum ClientGameStateAction{
+  PAUSE_GAME=0;
+  RESUME_GAME=1;
+  RESET_DRAW_RATE=3;
+}
+message ArenaStateChange{
+  //The action that was taken (add or remove)
+  StateChangeAction action=1;
+  //The index of the card that was added or removed
+  uint32 card=2;
+  //The index of the pile that was changed
+  uint32 pileIndex=3;
+}
+enum PlayerStateChangeType{
+  BLITZ_PILE=0;
+  AVAILABLE_HAND=1;
+  POST_PILE=2;
+  RESET_PLAYER_HAND=3;
+  TRANSFER_HAND_TO_AVAILABLE=4;
+  PLAYER_CALL_BLITZ=5;
+}
+enum StateChangeAction{
+  ADD=0;
+  REMOVE=1;
+}
+
+message PlayerStateChange{
+  uint32 playerId=1;
+  //The type of change that was made
+  PlayerStateChangeType changeType=2;
+  //The action that was taken (add or remove)
+  StateChangeAction action=3;
+  //The index of the card that was added or removed
+  uint32 card=4;
+}
+//Sent after the server receives a client event or vice versa. This is used to acknowledge that the server received the event and finished processing it
+message Acknowledge{
+  //The id of the event that this is acknowledging
+  uint32 eventId=1;
+  EAcknowledgementType acknowledgementType=2;
+  string message=3;
+}
+message ServerRequestStartGameEvent{
+  GamePrefs prefs=1;
+  GlobalDeck globalDeck=2;
+
+}
+message GameStateChange{
+  repeated ArenaStateChange arenaStateChanges=1;
+  repeated PlayerStateChange playerStateChanges=2;
+
+}
+enum ServerGameStateAction{
+  SERVER_PAUSE_GAME=0;
+  SERVER_RESUME_GAME=1;
+
+  SERVER_GAME_OVER=3;
+  SERVER_NEW_ROUND=4;
+}
+message ServerEvent{
+  uint32 eventId=8;
+  oneof event{
+    GameStateChange gameStateChange=1;
+    Acknowledge acknowledge=3;
+    ServerGameStateAction serverGameStateAction=5;
+    ServerRequestStartGameEvent requestStartGame=4;
+    ChangeDrawRateEvent changeDrawRate=7;
+    google.protobuf.Empty confirmGameStart=6;
+
+  }
+}
+//Handles communication within a game session
+service GameService{
+  //Open server event stream. This is used to send events to the client
+  rpc OpenEventStream(Player) returns (stream ServerEvent);
+  //Open client event stream. This is used to send events to the server
+  rpc OpenClientEventStream(stream ClientEvent) returns (google.protobuf.Empty);
+}
+
+message ChangeDrawRateRq{
+  string player_id=1;
+  uint32 drawRate=2;
+}
+message ResetDrawRateRq{
+  string player_id=1;
+
+}
+
+enum ArenaPlayType{
+  FROM_AVAILABLE_HAND=0;
+  FROM_BLITZ=1;
+  FROM_POST=2;
+}
+enum PlayerPlayType{
+  BLITZ_TO_POST=0;
+  AVAILABLE_HAND_TO_POST=1;
+  TRANSFER_TO_AVAILABLE_HAND=2;
+  RESET_HAND=3;
+
+}
+message ArenaPlay{
+  ArenaPlayType playType=1;
+  optional uint32 fromIndex=2;
+  optional uint32 toIndex=3;
+}
+message PlayerPlay{
+  PlayerPlayType playType=1;
+  optional uint32 postIndex=2;
+
+}
+message CallBlitz{
+  uint32 playerIndex=2;
+}
+//an enum representing the types of plays that can be made
+message Play{
+  oneof play{
+    ArenaPlay arenaPlay=1;
+    PlayerPlay playerPlay=2;
+    CallBlitz callBlitz=3;
+  }
+  uint32 player_id=4;
+
+}
+//Try and join an active session. The face_image_id is the id of the face image that the player wants to use. 
+//Must be chosen from the available face images before joining a sessions
+message JoinSessionRq{
+  string session_id=1;
+  string username=2;
+  //The image id of the face image that the player wants to use
+  uint32 face_image_id=4;
+}

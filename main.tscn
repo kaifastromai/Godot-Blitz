@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=3 uid="uid://j7b32qwxtixq"]
+
+[ext_resource type="PackedScene" uid="uid://bo5in0f2j3ul1" path="res://Scenes/Menu/menu.tscn" id="1_3kk3v"]
+[ext_resource type="Script" path="res://Arena.cs" id="1_whugx"]
+[ext_resource type="PackedScene" uid="uid://dwnm8b8i1qkf" path="res://Deck.tscn" id="2_qi8qk"]
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_whugx")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="MainMenu" parent="CanvasLayer" instance=ExtResource("1_3kk3v")]
+
+[node name="Area2D" parent="." instance=ExtResource("2_qi8qk")]
+position = Vector2(531, 492)

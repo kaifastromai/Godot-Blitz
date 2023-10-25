@@ -1,0 +1,23 @@
+[gd_scene load_steps=6 format=3 uid="uid://bo5in0f2j3ul1"]
+
+[ext_resource type="Script" path="res://Menu.cs" id="1_iox4h"]
+[ext_resource type="PackedScene" uid="uid://cfkadx01l7mxj" path="res://Scenes/Menu/sessions_screen.tscn" id="1_vvmvd"]
+[ext_resource type="PackedScene" uid="uid://cdcv2ak4iv5q3" path="res://Scenes/Menu/new_session.tscn" id="3_k30br"]
+[ext_resource type="PackedScene" uid="uid://bnaielrtorahd" path="res://Scenes/Menu/game_ui.tscn" id="4_w8mea"]
+[ext_resource type="PackedScene" uid="uid://on0y2chew1ad" path="res://start_game.tscn" id="5_3hon6"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -2.0
+offset_right = -3.0
+offset_bottom = 3.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_iox4h")
+SessionsView = ExtResource("1_vvmvd")
+NewSessionView = ExtResource("3_k30br")
+GameUiView = ExtResource("4_w8mea")
+NewGameView = ExtResource("5_3hon6")
